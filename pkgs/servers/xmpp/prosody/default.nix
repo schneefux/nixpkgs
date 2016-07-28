@@ -28,9 +28,9 @@ stdenv.mkDerivation rec {
   };
 
   communityModules = fetchhg {
-    url = "http://prosody-modules.googlecode.com/hg/";
-    rev = "4b55110b0aa8";
-    sha256 = "0010x2rl9f9ihy2nwqan2jdlz25433srj2zna1xh10490mc28hij";
+    url = "https://hg.prosody.im/prosody-modules/";
+    rev = "f388747c53c7";
+    sha256 = "1pbvqcg9jcajlnd9vnkrpl6y2zfbjxhaqd8prizm5ap5kdfpqwyb";
   };
 
   buildInputs = [ lua5 luasocket luasec luaexpat luabitop libidn openssl makeWrapper ]
