@@ -180,6 +180,26 @@ in {
     '';
   };
 
+  discordpy = buildPythonPackage rec {
+    name = "discord.py-${version}";
+    version = "0.15.1";
+    disabled = pythonOlder "3.3";
+
+    meta = {
+      description = "A python wrapper for the Discord API";
+      homepage    = "https://discordpy.rtfd.org/";
+      license     = licenses.mit;
+      platforms   = platforms.all;
+    };
+
+    propagatedBuildInputs = with self; [ asyncio aiohttp_1_0 websockets pynacl ];
+
+    src = pkgs.fetchurl {
+      url = "mirror://pypi/d/discord.py/${name}.tar.gz";
+      sha256 = "01lgidvnwwva1i65853gaplamllym2nsk0jis2r6f1rzbamgk1yj";
+    };
+  };
+
   h5py = callPackage ../development/python-modules/h5py {
     hdf5 = pkgs.hdf5;
   };
@@ -576,6 +596,16 @@ in {
       license = with licenses; [ asl20 ];
       homepage = https://github.com/KeepSafe/aiohttp/;
     };
+  };
+
+  aiohttp_1_0 = self.aiohttp.override rec {
+    name = "aiohttp-${version}";
+    version = "1.0.5";
+    src = pkgs.fetchurl {
+      url = "mirror://pypi/a/aiohttp/${name}.tar.gz";
+      sha256 = "1243mbwv3q8jj9c5q7405gridqnzvfr5idp8czh40zgr4rvqkqf3";
+    };
+    propagatedBuildInputs = with self; [ async-timeout chardet multidict ];
   };
 
   alabaster = buildPythonPackage rec {
@@ -1175,6 +1205,26 @@ in {
     src = pkgs.fetchurl {
       url = "mirror://pypi/a/async/${name}.tar.gz";
       sha256 = "1lfmjm8apy9qpnpbq8g641fd01qxh9jlya5g2d6z60vf8p04rla1";
+    };
+  };
+
+  async-timeout = buildPythonPackage rec {
+    name = "async-timeout-${version}";
+    version = "1.1.0";
+    disabled = pythonOlder "3.3";
+
+    src = pkgs.fetchurl {
+      url = "mirror://pypi/a/async-timeout/${name}.tar.gz";
+      sha256 = "109h2hc3czvacjjzpsb8csjy4698nf0pmwkv7k10x00v03zd32xq";
+    };
+
+    propagatedBuildInputs = with self; [ pytestrunner ];
+    doCheck = false;
+
+    meta = {
+      description = "Timeout context manager for asyncio programs";
+      homepage    = "https://github.com/aio-libs/async_timeout";
+      license     = licenses.asl20;
     };
   };
 
@@ -14637,6 +14687,24 @@ in {
     propagatedBuildInputs = with self; [ eventlib application gnutls ];
   };
 
+  multidict = buildPythonPackage rec {
+    name = "multidict-${version}";
+    version = "2.1.4";
+
+    src = pkgs.fetchurl {
+      url = "mirror://pypi/m/multidict/${name}.tar.gz";
+      sha256 = "1mscii8pifiz788ma7yh8pldp158lz98xzs3vfsw6il8yv4shym7";
+    };
+
+    doCheck = false;
+
+    meta = with stdenv.lib; {
+      homepage = "https://github.com/aio-libs/multidict";
+      description = "multidict implementation";
+      license = licenses.asl20;
+    };
+  };
+
   multipledispatch = buildPythonPackage rec {
     name = "multipledispatch-${version}";
     version = "0.4.8";
@@ -17757,9 +17825,26 @@ in {
     name = "parsedatetime-${version}";
     version = "1.5";
 
+    meta = {
+      description = "Parse human-readable date/time text";
+      homepage = "https://github.com/bear/parsedatetime";
+      license = licenses.asl20;
+    };
+
+    doCheck = false;
+
     src = pkgs.fetchurl {
         url = "mirror://pypi/p/parsedatetime/${name}.tar.gz";
         sha256 = "1as0mm4ql3z0324nc9bys2s1ngh507i317p16b79rx86wlmvx9ix";
+    };
+  };
+
+  parsedatetime_2_1 = self.parsedatetime.override rec {
+    name = "parsedatetime-${version}";
+    version = "2.1";
+    src = pkgs.fetchurl {
+      url = "mirror://pypi/p/parsedatetime/${name}.tar.gz";
+      sha256 = "0bdgyw6y3v7bcxlx0p50s8drxsh5bb5cy2afccqr3j90amvpii8p";
     };
   };
 
@@ -26024,6 +26109,25 @@ in {
     };
   };
 
+  websockets = buildPythonPackage rec {
+    name = "websockets-${version}";
+    version = "3.2";
+    disabled = pythonOlder "3.3";
+
+    src = pkgs.fetchurl {
+      url = "mirror://pypi/w/websockets/${name}.tar.gz";
+      sha256 = "1dah1faywsnrlqyzagb1qc1cxrq9145srkdy118yhy9s8dyq4dmm";
+    };
+
+    doCheck = false;
+
+    meta = {
+      description = "WebSocket implementation in Python 3";
+      homepage = https://github.com/aaugustin/websockets;
+      license = licenses.bsd3;
+      platforms = platforms.all;
+    };
+  };
 
   wand = buildPythonPackage rec {
     name = "Wand-0.3.5";
