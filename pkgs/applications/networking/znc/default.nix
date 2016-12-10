@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, openssl, pkgconfig
+{ stdenv, fetchgit, openssl, pkgconfig, autoconf, automake, which
 , withPerl ? false, perl
 , withPython ? false, python3
 , withTcl ? false, tcl
@@ -11,16 +11,24 @@ stdenv.mkDerivation rec {
   name = "znc-${version}";
   version = "1.6.4";
 
-  src = fetchurl {
-    url = "http://znc.in/releases/${name}.tar.gz";
-    sha256 = "070d6b1i3jy66m4ci4ypxkg4pbwqbzbzss1y1ycgq2w62zmrf423";
+  src = fetchgit {
+    url = "https://github.com/znc/znc";
+    rev = "refs/tags/${name}";
+    sha256 = "1pc4vlra82g176ib9qjlhqg6q6p08wgvk2bx3m64r34ppbsq5wbn";
+    fetchSubmodules = true;
   };
 
-  buildInputs = [ openssl pkgconfig ]
+  patches = [ ./sslfiles.patch ./csocket.patch ]; # https://github.com/znc/znc/pull/1192 easier SSL configuration
+
+  buildInputs = [ openssl pkgconfig autoconf automake which ]
     ++ optional withPerl perl
     ++ optional withPython python3
     ++ optional withTcl tcl
     ++ optional withCyrus cyrus_sasl;
+
+  preConfigure = ''
+    $shell autogen.sh
+  '';
 
   configureFlags = optionalString withPerl "--enable-perl "
     + optionalString withPython "--enable-python "
