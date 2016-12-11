@@ -7,12 +7,12 @@
 
 with stdenv.lib;
 stdenv.mkDerivation rec {
-  name = "znc-1.6.3";
+  name = "znc-1.6.4";
 
   src = fetchgit {
     url = "https://github.com/znc/znc";
     rev = "refs/tags/${name}";
-    sha256 = "01v6b13y34mrcdin3gb1n25fh0d7p3g7bm2m33nlfqc68580ail9";
+    sha256 = "1pc4vlra82g176ib9qjlhqg6q6p08wgvk2bx3m64r34ppbsq5wbn";
     fetchSubmodules = true;
   };
 
