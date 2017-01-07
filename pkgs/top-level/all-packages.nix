@@ -1867,6 +1867,8 @@ in
 
   git-lfs = callPackage ../applications/version-management/git-lfs { };
 
+  gitea = callPackage ../applications/version-management/gitea { };
+
   gitfs = callPackage ../tools/filesystems/gitfs { };
 
   gitinspector = callPackage ../applications/version-management/gitinspector { };
