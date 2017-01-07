@@ -2818,6 +2818,10 @@ in
 
   minixml = callPackage ../development/libraries/minixml { };
 
+  mir-qualia = callPackage ../tools/text/mir-qualia {
+    pythonPackages = python3Packages;
+  };
+
   miredo = callPackage ../tools/networking/miredo { };
 
   mitmproxy = callPackage ../tools/networking/mitmproxy { };
@@ -8375,7 +8379,9 @@ in
 
   libpfm = callPackage ../development/libraries/libpfm { };
 
-  libpqxx = callPackage ../development/libraries/libpqxx { };
+  libpqxx = callPackage ../development/libraries/libpqxx { 
+    gnused = gnused_422;
+  };
 
   libproxy = callPackage ../development/libraries/libproxy {
     stdenv = if stdenv.isDarwin
