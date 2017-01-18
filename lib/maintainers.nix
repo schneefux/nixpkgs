@@ -221,6 +221,7 @@
   joamaki = "Jussi Maki <joamaki@gmail.com>";
   joelmo = "Joel Moberg <joel.moberg@gmail.com>";
   joelteon = "Joel Taylor <me@joelt.io>";
+  johbo = "Johannes Bornhold <johannes@bornhold.name>";
   joko = "Ioannis Koutras <ioannis.koutras@gmail.com>";
   jonafato = "Jon Banafato <jon@jonafato.com>";
   jpbernardy = "Jean-Philippe Bernardy <jeanphilippe.bernardy@gmail.com>";
@@ -237,6 +238,7 @@
   KibaFox = "Kiba Fox <kiba.fox@foxypossibilities.com>";
   kierdavis = "Kier Davis <kierdavis@gmail.com>";
   kkallio = "Karn Kallio <tierpluspluslists@gmail.com>";
+  knedlsepp = "Josef Kemetmüller <josef.kemetmueller@gmail.com>";
   koral = "Koral <koral@mailoo.org>";
   kovirobi = "Kovacsics Robert <kovirobi@gmail.com>";
   kragniz = "Louis Taylor <louis@kragniz.eu>";
@@ -246,6 +248,7 @@
   ldesgoui = "Lucas Desgouilles <ldesgoui@gmail.com>";
   league = "Christopher League <league@contrapunctus.net>";
   lebastr = "Alexander Lebedev <lebastr@gmail.com>";
+  leemachin = "Lee Machin <me@mrl.ee>";
   leenaars = "Michiel Leenaars <ml.software@leenaa.rs>";
   leonardoce = "Leonardo Cecchi <leonardo.cecchi@gmail.com>";
   lethalman = "Luca Bruno <lucabru@src.gnome.org>";

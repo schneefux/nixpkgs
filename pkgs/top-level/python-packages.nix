@@ -2321,11 +2321,11 @@ in {
 
   channels = buildPythonPackage rec {
     name = "channels-${version}";
-    version = "0.17.3";
+    version = "1.0.2";
 
     src = pkgs.fetchurl {
       url = "mirror://pypi/c/channels/${name}.tar.gz";
-      sha256 = "03nalz0mqjxqlgqwkmranair2c1amry2aw52dd78ihf07dfinnc9";
+      sha256 = "0d8fywg416p851i8vz26pmz8b47akg5z10yw7xc7i51cpmp7y5zj";
     };
 
     # Files are missing in the distribution
@@ -5833,11 +5833,11 @@ in {
 
   daphne = buildPythonPackage rec {
     name = "daphne-${version}";
-    version = "0.15.0";
+    version = "1.0.1";
 
     src = pkgs.fetchurl {
       url = "mirror://pypi/d/daphne/${name}.tar.gz";
-      sha256 = "095xdh10v8sqwyas02q72ij3ivd5qjg5ki5cvha0fpzd361izdnp";
+      sha256 = "0l62bd9swv0k9qcpl2s8kj4mgl6qayi0krwkkg1x73a9y48xpi9z";
     };
 
     propagatedBuildInputs = with self; [ asgiref autobahn ];
@@ -7719,6 +7719,27 @@ in {
     };
   };
 
+  ipfsapi = buildPythonPackage rec {
+    name = "ipfsapi-${version}";
+    version = "0.4.0";
+    disabled = isPy26 || isPy27;
+
+    src = pkgs.fetchurl {
+      url = "mirror://pypi/i/ipfsapi/${name}.tar.gz";
+      sha256 = "0mqqsihannxzaqi8zcj9nca7fxwg1c85bp7xxic3xqa5zslcdcc3";
+    };
+
+    buildInputs = with self; [ pkgs.pandoc ];
+    propagatedBuildInputs = with self; [ six requests2 ];
+
+    meta = {
+      description = "A python client library for the IPFS API";
+      license = licenses.mit;
+      maintainers = with maintainers; [ mguentner ];
+      homepage = "https://pypi.python.org/pypi/ipfsapi";
+    };
+  };
+
   itsdangerous = buildPythonPackage rec {
     name = "itsdangerous-0.24";
 
@@ -9186,6 +9207,8 @@ in {
     propagatedBuildInputs = with self; [ pyramid hawkauthlib tokenlib webtest ];
   };
 
+  pyroute2 = callPackage ../development/python-modules/pyroute2 { };
+
   pyspf = buildPythonPackage rec {
     name = "pyspf-${version}";
     version = "2.0.12";
@@ -10072,12 +10095,12 @@ in {
 
   django_1_10 = buildPythonPackage rec {
     name = "Django-${version}";
-    version = "1.10.4";
+    version = "1.10.5";
     disabled = pythonOlder "2.7";
 
     src = pkgs.fetchurl {
       url = "http://www.djangoproject.com/m/releases/1.10/${name}.tar.gz";
-      sha256 = "0asw60i4r5cdxb2jp6r09pdrwxxp8mvwbkz7vnx15n0hwmig1xzz";
+      sha256 = "12szjsmnfhh2yr54sfynyjr8vl0q9gb6qak3ayqcifcinrs97f0d";
     };
 
     patches = [
@@ -12390,6 +12413,10 @@ in {
       rev = "fdc7b812f99e48c00e9a487bd56751bbeae07043";
       sha256 = "1imgxsl4mr1662vsj2mlnpvvrbz71yk00w8p85vi5bkgmc6awgiz";
     };
+
+    prePatch = optionals pkgs.stdenv.isDarwin ''
+      sed -i 's/raise.*No Xcode or CLT version detected.*/version = "7.0.0"/' pylib/gyp/xcode_emulation.py
+    '';
 
     patches = optionals pkgs.stdenv.isDarwin [
       ../development/python-modules/gyp/no-darwin-cflags.patch
@@ -20039,8 +20066,8 @@ in {
 
     buildInputs = [ pkgs.libev ];
 
-    libEvSharedLibrary = 
-      if !stdenv.isDarwin  
+    libEvSharedLibrary =
+      if !stdenv.isDarwin
       then "${pkgs.libev}/lib/libev.so.4"
       else "${pkgs.libev}/lib/libev.4.dylib";
 
@@ -23821,11 +23848,11 @@ in {
 
   sounddevice = buildPythonPackage rec {
     name = "sounddevice-${version}";
-    version = "0.3.4";
+    version = "0.3.6";
 
     src = pkgs.fetchurl {
       url = "mirror://pypi/s/sounddevice/${name}.tar.gz";
-      sha256 = "f6c4120357c1458b23bd0d466c66808efdefad397bf97b1162600d079d4665ae";
+      sha256 = "4ef39be2d13069fbad8c69ac259e018d96ce55c23b529a7e0be9bd9a76e2e8da";
     };
 
     propagatedBuildInputs = with self; [ cffi numpy pkgs.portaudio ];
@@ -29754,12 +29781,12 @@ EOF
   };
 
   neovim = buildPythonPackage rec {
-    version = "0.1.12";
+    version = "0.1.13";
     name = "neovim-${version}";
 
     src = pkgs.fetchurl {
       url = "mirror://pypi/n/neovim/${name}.tar.gz";
-      sha256 = "1pll4jjqdq54d867hgqnnpiiz4pz4bbjrnh6binbp7djcbgrb8zq";
+      sha256 = "0pzk5639jjjx46a6arkwy31falmk5w1061icbml8njm3rbrwwhgx";
     };
 
     buildInputs = with self; [ nose ];
@@ -31875,6 +31902,9 @@ EOF
       rev = "479211f6c5a7d034fd77762dfed381c3315cd773";
       sha256 = "1ad0mkixc0s86djwsvhp1qlvcfs25086nh0qw7bys49gz8shczzi";
     };
+  };
+
+  yenc = callPackage ../development/python-modules/yenc {
   };
 
   zeitgeist = if isPy3k then throw "zeitgeist not supported for interpreter ${python.executable}" else
