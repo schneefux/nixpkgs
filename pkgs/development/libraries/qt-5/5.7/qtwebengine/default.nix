@@ -31,7 +31,17 @@ qtSubmodule {
       --replace /bin/echo ${coreutils}/bin/echo
     substituteInPlace ./src/3rdparty/chromium/v8/build/standalone.gypi \
       --replace /bin/echo ${coreutils}/bin/echo
-      
+
+    # fix default SSL bundle location
+    sed -i -e 's,/cert.pem,/certs/ca-bundle.crt,' src/3rdparty/chromium/third_party/boringssl/src/crypto/x509/x509_def.c
+
+    # Fix library paths
+    sed -i \
+      -e "s,QLibraryInfo::location(QLibraryInfo::DataPath),QLatin1String(\"$out\"),g" \
+      -e "s,QLibraryInfo::location(QLibraryInfo::TranslationsPath),QLatin1String(\"$out/translations\"),g" \
+      -e "s,QLibraryInfo::location(QLibraryInfo::LibraryExecutablesPath),QLatin1String(\"$out/libexec\"),g" \
+      src/core/web_engine_library_info.cpp
+
     configureFlags+="\
         -plugindir $out/lib/qt5/plugins \
         -importdir $out/lib/qt5/imports \

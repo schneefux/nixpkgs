@@ -1,4 +1,4 @@
-{ stdenv, lib, fetchurl, copyPathsToStore
+{ stdenv, lib, fetchpatch, copyPathsToStore
 , srcs
 
 , xlibs, libX11, libxcb, libXcursor, libXext, libXrender, libXi
@@ -30,10 +30,10 @@ let
   # Search path for Gtk plugin
   gtkLibPath = lib.makeLibraryPath [ gtk2 gnome_vfs libgnomeui GConf ];
 
-  dontInvalidateBacking = fetchurl {
+  dontInvalidateBacking = fetchpatch {
     url = "https://codereview.qt-project.org/gitweb?p=qt/qtbase.git;a=patch;h=0f68f8920573cdce1729a285a92ac8582df32841;hp=24c50f8dcf7fa61ac3c3d4d6295c259a104a2b8c";
     name = "qtbug-48321-dont-invalidate-backing-store.patch";
-    sha256 = "07vnndmvri73psz0nrs2hg0zw2i4b1k1igy2al6kwjbp7d5xpglr";
+    sha256 = "1wynm2hhbhpvzvsz4vpzzkl0ss5skac6934bva8brcpi5xq68h1q";
   };
 in
 
@@ -55,7 +55,7 @@ stdenv.mkDerivation {
   patches =
     copyPathsToStore (lib.readPathsFromFile ./. ./series)
     ++ lib.optional decryptSslTraffic ./decrypt-ssl-traffic.patch
-    ++ lib.optional mesaSupported [ ./dlopen-gl.patch ./mkspecs-libgl.patch ];
+    ++ lib.optionals mesaSupported [ ./dlopen-gl.patch ./mkspecs-libgl.patch ];
 
   postPatch =
     ''
@@ -269,6 +269,12 @@ stdenv.mkDerivation {
               done
           popd
       fi
+    ''
+
+    # fixup .pc file (where to find 'moc' etc.)
+    + lib.optionalString (!stdenv.isDarwin) ''
+      sed -i "$dev/lib/pkgconfig/Qt5Core.pc" \
+          -e "/^host_bins=/ c host_bins=$dev/bin"
     '';
 
   inherit lndir;

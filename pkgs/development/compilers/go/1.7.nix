@@ -24,13 +24,13 @@ in
 
 stdenv.mkDerivation rec {
   name = "go-${version}";
-  version = "1.7.3";
+  version = "1.7.4";
 
   src = fetchFromGitHub {
     owner = "golang";
     repo = "go";
     rev = "go${version}";
-    sha256 = "0dcappkx4ichl249swwdyk7l078ajng0gl6a885va85z8m1jnvbs";
+    sha256 = "1ks3xph20afrfp3vqs1sjnkpjb0lgxblv8706wa3iiyg7rka4axv";
   };
 
   # perl is used for testing go vet
@@ -66,6 +66,8 @@ stdenv.mkDerivation rec {
     sed -i '/src\/cmd\/api\/run.go/ireturn nil' src/cmd/dist/test.go
     # Remove the coverage test as we have removed this utility
     sed -i '/TestCoverageWithCgo/areturn' src/cmd/go/go_test.go
+    # Remove the timezone naming test
+    sed -i '/TestLoadFixed/areturn' src/time/time_test.go
 
     sed -i 's,/etc/protocols,${iana_etc}/etc/protocols,' src/net/lookup_unix.go
     sed -i 's,/etc/services,${iana_etc}/etc/services,' src/net/port_unix.go
@@ -101,7 +103,18 @@ stdenv.mkDerivation rec {
     sed -i '1 a\exit 0' misc/cgo/errors/test.bash
   '';
 
-  patches = [ ./remove-tools-1.7.patch ./cacert-1.7.patch ];
+  patches =
+    [ ./remove-tools-1.7.patch
+      ./cacert-1.7.patch
+      ./creds-test.patch
+
+      # This test checks for the wrong thing with recent tzdata. It's been fixed in master but the patch
+      # actually works on old versions too.
+      (fetchpatch {
+        url    = "https://github.com/golang/go/commit/91563ced5897faf729a34be7081568efcfedda31.patch";
+        sha256 = "1ny5l3f8a9dpjjrnjnsplb66308a0x13sa0wwr4j6yrkc8j4qxqi";
+      })
+    ];
 
   SSL_CERT_FILE = "${cacert}/etc/ssl/certs/ca-bundle.crt";
 

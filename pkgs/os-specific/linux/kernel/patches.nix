@@ -18,7 +18,7 @@ let
       };
     };
 
-  grsecPatch = { grbranch ? "test", grver ? "3.1", kver, grrev, sha256 }: rec {
+  grsecPatch = { grbranch ? "test", grver ? "3.1", kver, grrev, sha512 }: rec {
     name = "grsecurity-${grver}-${kver}-${grrev}";
 
     # Pass these along to allow the caller to determine compatibility
@@ -30,9 +30,9 @@ let
         # When updating versions/hashes, ALWAYS use the official
         # version; we use this mirror only because upstream removes
         # source files immediately upon releasing a new version ...
-        "https://raw.githubusercontent.com/slashbeast/grsecurity-scrape/master/${grbranch}/${name}.patch"
+        "https://raw.githubusercontent.com/slashbeast/grsecurity-scrape/master/${grbranch}/${kver}/${name}.patch"
       ];
-      inherit sha256;
+      inherit sha512;
     };
 
     features.grsecurity = true;
@@ -40,6 +40,12 @@ let
 in
 
 rec {
+
+  multithreaded_rsapubkey =
+    {
+      name = "multithreaded-rsapubkey-asn1.patch";
+      patch = ./multithreaded-rsapubkey-asn1.patch;
+    };
 
   bridge_stp_helper =
     { name = "bridge-stp-helper";
@@ -89,9 +95,9 @@ rec {
   };
 
   grsecurity_testing = grsecPatch
-    { kver   = "4.8.13";
-      grrev  = "201612082118";
-      sha256 = "0cvw6sbinzlcxap8mf934ksgksgdd8w8pf8jfp82fbyiz53klfn1";
+    { kver   = "4.9.16";
+      grrev  = "201703180820";
+      sha512 = "114yqjffxnf412ypaq91r732mi4im2qakj07g0nbqx1qyg319qag5ckc5438kcny3qhzb9wyrwr6mhza51cq7js40ps2aw7alwjfgql";
     };
 
   # This patch relaxes grsec constraints on the location of usermode helpers,
@@ -157,6 +163,24 @@ rec {
       patch = fetchpatch {
         url = "https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/patch/?id=84ac7260236a49c79eede91617700174c2c19b0c";
         sha256 = "19viqjjgq8j8jiz5yhgmzwhqvhwv175q645qdazd1k69d25nv2ki";
+      };
+    };
+
+  panic_on_icmp6_frag_CVE_2016_9919 = rec
+    { name = "panic_on_icmp6_frag_CVE_2016_9919.patch";
+      patch = fetchpatch {
+        inherit name;
+        url = "https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/patch/?id=79dc7e3f1cd323be4c81aa1a94faa1b3ed987fb2";
+        sha256 = "0mps33r4mnwiy0bmgrzgqkrk59yya17v6kzpv9024g4xlz61rk8p";
+      };
+    };
+
+  DCCP_double_free_vulnerability_CVE-2017-6074 = rec
+    { name = "DCCP_double_free_vulnerability_CVE-2017-6074.patch";
+      patch = fetchpatch {
+        inherit name;
+        url = "https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/patch/?id=5edabca9d4cff7f1f2b68f0bac55ef99d9798ba4";
+        sha256 = "10dmv3d3gj8rvj9h40js4jh8xbr5wyaqiy0kd819mya441mj8ll2";
       };
     };
 }

@@ -102,6 +102,13 @@ let
         make $makeFlags "''${makeFlagsArray[@]}" oldconfig
         runHook postConfigure
 
+        make $makeFlags prepare
+        actualModDirVersion="$(cat $buildRoot/include/config/kernel.release)"
+        if [ "$actualModDirVersion" != "${modDirVersion}" ]; then
+          echo "Error: modDirVersion specified in the Nix expression is wrong, it should be: $actualModDirVersion"
+          exit 1
+        fi
+
         # Note: we can get rid of this once http://permalink.gmane.org/gmane.linux.kbuild.devel/13800 is merged.
         buildFlagsArray+=("KBUILD_BUILD_TIMESTAMP=$(date -u -d @$SOURCE_DATE_EPOCH)")
       '';
@@ -120,7 +127,7 @@ let
 
       # Some image types need special install targets (e.g. uImage is installed with make uinstall)
       installTargets = [ (if platform.kernelTarget == "uImage" then "uinstall" else
-                          if platform.kernelTarget == "zImage" then "zinstall" else
+                          if platform.kernelTarget == "zImage" || platform.kernelTarget == "Image.gz" then "zinstall" else
                           "install") ];
 
       postInstall = ''

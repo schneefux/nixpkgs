@@ -3,8 +3,9 @@
 , freetype, fontconfig, file, alsaLib, nspr, nss, libnotify
 , yasm, mesa, sqlite, unzip, makeWrapper
 , hunspell, libevent, libstartup_notification, libvpx
-, cairo, gstreamer, gst_plugins_base, icu, libpng, jemalloc, libpulseaudio
+, cairo, gstreamer, gst-plugins-base, icu, libpng, jemalloc, libpulseaudio
 , autoconf213, which
+, writeScript, xidel, common-updater-scripts, coreutils, gnused, gnugrep, curl
 , enableGTK3 ? false
 , debugBuild ? false
 , # If you want the resulting program to call itself "Firefox" instead
@@ -19,7 +20,7 @@ assert stdenv.cc ? libc && stdenv.cc.libc != null;
 
 let
 
-common = { pname, version, sha512 }: stdenv.mkDerivation rec {
+common = { pname, version, sha512, updateScript }: stdenv.mkDerivation rec {
   name = "${pname}-unwrapped-${version}";
 
   src = fetchurl {
@@ -28,6 +29,10 @@ common = { pname, version, sha512 }: stdenv.mkDerivation rec {
       in "mirror://mozilla/firefox/releases/${version}/source/firefox-${version}.source.tar.${ext}";
     inherit sha512;
   };
+
+  # this patch should no longer be needed in 53
+  # from https://bugzilla.mozilla.org/show_bug.cgi?id=1013882
+  patches = lib.optional debugBuild ./fix-debug.patch;
 
   buildInputs =
     [ pkgconfig gtk2 perl zip libIDL libjpeg zlib bzip2
@@ -41,9 +46,9 @@ common = { pname, version, sha512 }: stdenv.mkDerivation rec {
       libpulseaudio # only headers are needed
     ]
     ++ lib.optional enableGTK3 gtk3
-    ++ lib.optionals (!passthru.ffmpegSupport) [ gstreamer gst_plugins_base ];
+    ++ lib.optionals (!passthru.ffmpegSupport) [ gstreamer gst-plugins-base ];
 
-  nativeBuildInputs = [autoconf213 which];
+  nativeBuildInputs = [ autoconf213 which gnused ];
 
   configureFlags =
     [ "--enable-application=browser"
@@ -135,7 +140,7 @@ common = { pname, version, sha512 }: stdenv.mkDerivation rec {
   };
 
   passthru = {
-    inherit nspr version;
+    inherit nspr version updateScript;
     gtk = gtk2;
     isFirefox3Like = true;
     browserName = "firefox";
@@ -147,14 +152,23 @@ in {
 
   firefox-unwrapped = common {
     pname = "firefox";
-    version = "50.0.2";
-    sha512 = "cfcc3e5a703e4d3284e3b3dcb34e5f77825e5a98b49a75bf22f8ac431c0429e6cd21c4e1f5e046fe82899cb4d2bc5b7a432b306c4af35034d83a9f351393f7fd";
+    version = "52.0.1";
+    sha512 = "535e2cc0ee645d4ebe9f1d2d1f4fbb16ff5d1745ce493add6b2e323ca3b0907c3054705c5a15eaadb314d5d6474ba1825554fd1ff0780ab7f76fd3f9672a6974";
+    updateScript = import ./update.nix {
+      attrPath = "firefox-unwrapped";
+      inherit writeScript lib common-updater-scripts xidel coreutils gnused gnugrep curl;
+    };
   };
 
   firefox-esr-unwrapped = common {
     pname = "firefox-esr";
-    version = "45.5.1esr";
-    sha512 = "36c56e1486a6a35f71526bd81d01fb4fc2b9df852eb2feb39b77c902fcf90d713d8fcdcd6113978630345e1ed36fa5cf0df6da7b6bf7e85a84fe014cb11f9a03";
+    version = "52.0.1esr";
+    sha512 = "c1f0aea279254e7788f62bba7892840edd2b667f385a649d374c9e783b93ec7faf9e5ebfccd04cd94f46da37aeb6bd7785d17faca2ad441a0b6e8587917faab2";
+    updateScript = import ./update.nix {
+      attrPath = "firefox-esr-unwrapped";
+      versionSuffix = "esr";
+      inherit writeScript lib common-updater-scripts xidel coreutils gnused gnugrep curl;
+    };
   };
 
 }

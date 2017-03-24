@@ -69,7 +69,7 @@ in
 go.stdenv.mkDerivation (
   (builtins.removeAttrs args [ "goPackageAliases" "disabled" ]) // {
 
-  name = "go${go.meta.branch}-${name}";
+  inherit name;
   nativeBuildInputs = [ go parallel ]
     ++ (lib.optional (!dontRenameImports) govers) ++ nativeBuildInputs;
   buildInputs = [ go ] ++ buildInputs;
@@ -116,6 +116,7 @@ go.stdenv.mkDerivation (
       local d; local cmd;
       cmd="$1"
       d="$2"
+      . $TMPDIR/buildFlagsArray
       echo "$d" | grep -q "\(/_\|examples\|Godeps\)" && return 0
       [ -n "$excludedPackages" ] && echo "$d" | grep -q "$excludedPackages" && return 0
       local OUT
@@ -143,6 +144,11 @@ go.stdenv.mkDerivation (
       fi
     }
 
+    if [ ''${#buildFlagsArray[@]} -ne 0 ]; then
+      declare -p buildFlagsArray > $TMPDIR/buildFlagsArray
+    else
+      touch $TMPDIR/buildFlagsArray
+    fi
     export -f buildGoDir # parallel needs to see the function
     if [ -z "$enableParallelBuilding" ]; then
         export NIX_BUILD_CORES=1
@@ -211,7 +217,7 @@ go.stdenv.mkDerivation (
 
   meta = {
     # Add default meta information
-    platforms = lib.platforms.all;
+    platforms = go.meta.platforms or lib.platforms.all;
   } // meta // {
     # add an extra maintainer to every package
     maintainers = (meta.maintainers or []) ++

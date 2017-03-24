@@ -32,20 +32,23 @@ with stdenv.lib;
   # Debugging.
   DEBUG_KERNEL y
   DYNAMIC_DEBUG y
-  TIMER_STATS y
   BACKTRACE_SELF_TEST n
   CPU_NOTIFIER_ERROR_INJECT? n
   DEBUG_DEVRES n
-  DEBUG_NX_TEST n
   DEBUG_STACK_USAGE n
   DEBUG_STACKOVERFLOW n
   RCU_TORTURE_TEST n
   SCHEDSTATS n
   DETECT_HUNG_TASK y
 
+  ${optionalString (versionOlder version "4.11") ''
+    TIMER_STATS y
+    DEBUG_NX_TEST n
+  ''}
+
   # Bump the maximum number of CPUs to support systems like EC2 x1.*
   # instances and Xeon Phi.
-  ${optionalString (stdenv.system == "x86_64-linux") ''
+  ${optionalString (stdenv.system == "x86_64-linux" || stdenv.system == "aarch64-linux") ''
     NR_CPUS 384
   ''}
 
@@ -121,6 +124,7 @@ with stdenv.lib;
   IP_VS_PROTO_ESP y
   IP_VS_PROTO_AH y
   IP_DCCP_CCID3 n # experimental
+  IP_MULTICAST y
   IPV6_ROUTER_PREF y
   IPV6_ROUTE_INFO y
   IPV6_OPTIMISTIC_DAD y
@@ -129,6 +133,9 @@ with stdenv.lib;
   IPV6_MROUTE y
   IPV6_MROUTE_MULTIPLE_TABLES y
   IPV6_PIMSM_V2 y
+  ${optionalString (versionAtLeast version "4.7") ''
+    IPV6_FOU_TUNNEL m
+  ''}
   CLS_U32_PERF y
   CLS_U32_MARK y
   ${optionalString (stdenv.system == "x86_64-linux") ''
@@ -142,6 +149,9 @@ with stdenv.lib;
   L2TP_IP m
   L2TP_ETH m
   BRIDGE_VLAN_FILTERING y
+  BONDING m
+  NET_L3_MASTER_DEV? y
+  NET_FOU_IP_TUNNELS? y
 
   # Wireless networking.
   CFG80211_WEXT? y # Without it, ipw2200 drivers don't build
@@ -186,6 +196,10 @@ with stdenv.lib;
   ${optionalString (versionAtLeast version "4.5" && (versionOlder version "4.9")) ''
     DRM_AMD_POWERPLAY y # necessary for amdgpu polaris support
   ''}
+  ${optionalString (versionAtLeast version "4.9") ''
+    DRM_AMDGPU_SI y # (experimental) amdgpu support for verde and newer chipsets
+    DRM_AMDGPU_CIK y # (stable) amdgpu support for bonaire and newer chipsets
+  ''}
 
   # Sound.
   SND_DYNAMIC_MINORS y
@@ -213,6 +227,7 @@ with stdenv.lib;
   # ACLs for all filesystems that support them.
   FANOTIFY y
   TMPFS y
+  TMPFS_POSIX_ACL y
   FS_ENCRYPTION? m
   EXT2_FS_XATTR y
   EXT2_FS_POSIX_ACL y
@@ -441,7 +456,7 @@ with stdenv.lib;
   FTRACE_SYSCALLS y
   SCHED_TRACER y
   STACK_TRACER y
-  UPROBE_EVENT y
+  UPROBE_EVENT? y
   ${optionalString (versionAtLeast version "4.4") ''
     BPF_SYSCALL y
     BPF_EVENTS y

@@ -1,9 +1,10 @@
-{ stdenv, fetchurl, pkgconfig, which, m4, gtk2, pango, perl, python2, zip, libIDL
+{ stdenv, lib, fetchurl, pkgconfig, which, m4, gtk2, pango, perl, python2, zip, libIDL
 , libjpeg, libpng, zlib, dbus, dbus_glib, bzip2, xorg
 , freetype, fontconfig, file, alsaLib, nspr, nss, libnotify
 , yasm, mesa, sqlite, unzip, makeWrapper
 , hunspell, libevent, libstartup_notification, libvpx
-, cairo, gstreamer, gst_plugins_base, icu
+, cairo, gstreamer, gst-plugins-base, icu
+, writeScript, xidel, common-updater-scripts, coreutils, gnused, gnugrep, curl
 , debugBuild ? false
 , # If you want the resulting program to call itself "Thunderbird"
   # instead of "Earlybird", enable this option.  However, those
@@ -13,7 +14,7 @@
   enableOfficialBranding ? false
 }:
 
-let version = "45.5.1"; in
+let version = "45.8.0"; in
 let verName = "${version}"; in
 
 stdenv.mkDerivation rec {
@@ -21,8 +22,17 @@ stdenv.mkDerivation rec {
 
   src = fetchurl {
     url = "mirror://mozilla/thunderbird/releases/${verName}/source/thunderbird-${verName}.source.tar.xz";
-    sha512 = "f6dc5f526e50facb9947627fcbc8db222cc20438fa62c552090dcabeabcc31dba2c66c20345090deaf5b58fd42b54938935eb1b3904528dce5949fd4cfc1ceb7";
+    sha512 = "f8ba08d874fb1a09ac9ba5d4d1f46cefe801783ba4bf82eee682ac2ecc4e231d07033a80e036ad04bda7780c093fb7bc3122a23dc6e19c12f18fb7168dc78deb";
   };
+
+  patches = [ ./gcc6.patch ];
+
+  # New sed no longer tolerates this mistake.
+  postPatch = ''
+    for f in mozilla/{js/src,}/configure; do
+      substituteInPlace "$f" --replace '[:space:]*' '[[:space:]]*'
+    done
+  '';
 
   buildInputs = # from firefox30Pkgs.xulrunner, without gstreamer and libvpx
     [ pkgconfig which libpng gtk2 perl zip libIDL libjpeg zlib bzip2
@@ -127,5 +137,11 @@ stdenv.mkDerivation rec {
       if enableOfficialBranding then licenses.proprietary else licenses.mpl11;
     maintainers = [ maintainers.pierron maintainers.eelco ];
     platforms = platforms.linux;
+  };
+
+  passthru.updateScript = import ./../../browsers/firefox/update.nix {
+    attrPath = "thunderbird";
+    baseUrl = "http://archive.mozilla.org/pub/thunderbird/releases/";
+    inherit writeScript lib common-updater-scripts xidel coreutils gnused gnugrep curl;
   };
 }

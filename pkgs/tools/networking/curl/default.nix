@@ -4,6 +4,7 @@
 , ldapSupport ? false, openldap ? null
 , zlibSupport ? false, zlib ? null
 , sslSupport ? false, openssl ? null
+, gnutlsSupport ? false, gnutls ? null
 , scpSupport ? false, libssh2 ? null
 , gssSupport ? false, gss ? null
 , c-aresSupport ? false, c-ares ? null
@@ -14,18 +15,24 @@ assert idnSupport -> libidn != null;
 assert ldapSupport -> openldap != null;
 assert zlibSupport -> zlib != null;
 assert sslSupport -> openssl != null;
+assert !(gnutlsSupport && sslSupport);
+assert gnutlsSupport -> gnutls != null;
 assert scpSupport -> libssh2 != null;
 assert c-aresSupport -> c-ares != null;
 
 stdenv.mkDerivation rec {
-  name = "curl-7.51.0";
+  name = "curl-7.53.1";
 
   src = fetchurl {
     url = "http://curl.haxx.se/download/${name}.tar.bz2";
-    sha256 = "1pldg1d8606p4q83k8fcp61kfcsbphln22mycw7h7r87i42410kz";
+    sha256 = "1s1hyndva0yp62xy96pcp4anzrvw6cl0abjajim17sbmdp00fwhw";
   };
 
+  patches = [ ];
+
   outputs = [ "bin" "dev" "out" "man" "devdoc" ];
+
+  enableParallelBuilding = true;
 
   nativeBuildInputs = [ pkgconfig perl ];
 
@@ -40,9 +47,8 @@ stdenv.mkDerivation rec {
     optional gssSupport gss ++
     optional c-aresSupport c-ares ++
     optional sslSupport openssl ++
+    optional gnutlsSupport gnutls ++
     optional scpSupport libssh2;
-
-  patches = stdenv.lib.optional http2Support ./fix-http2-window-size.patch;
 
   # for the second line see http://curl.haxx.se/mail/tracker-2014-03/0087.html
   preConfigure = ''
@@ -51,9 +57,12 @@ stdenv.mkDerivation rec {
   '';
 
   configureFlags = [
-      "--with-ca-bundle=/etc/ssl/certs/ca-certificates.crt"
+      # OS X does not have a default system bundle, so we assume cacerts is installed in the default nix-env profile
+      # This sucks. We should probably just include the latest cacerts in the darwin bootstrap.
+      "--with-ca-bundle=${if stdenv.isDarwin then "/nix/var/nix/profiles/default" else ""}/etc/ssl/certs/ca-${if stdenv.isDarwin then "bundle" else "certificates"}.crt"
       "--disable-manual"
       ( if sslSupport then "--with-ssl=${openssl.dev}" else "--without-ssl" )
+      ( if gnutlsSupport then "--with-gnutls=${gnutls.dev}" else "--without-gnutls" )
       ( if scpSupport then "--with-libssh2=${libssh2.dev}" else "--without-libssh2" )
       ( if ldapSupport then "--enable-ldap" else "--disable-ldap" )
       ( if ldapSupport then "--enable-ldaps" else "--disable-ldaps" )
@@ -68,6 +77,10 @@ stdenv.mkDerivation rec {
   postInstall = ''
     moveToOutput bin/curl-config "$dev"
     sed '/^dependency_libs/s|${libssh2.dev}|${libssh2.out}|' -i "$out"/lib/*.la
+  '' + stdenv.lib.optionalString gnutlsSupport ''
+    ln $out/lib/libcurl.so $out/lib/libcurl-gnutls.so
+    ln $out/lib/libcurl.so $out/lib/libcurl-gnutls.so.4
+    ln $out/lib/libcurl.so $out/lib/libcurl-gnutls.so.4.4.0
   '';
 
   crossAttrs = {
@@ -75,6 +88,7 @@ stdenv.mkDerivation rec {
     # For the 'urandom', maybe it should be a cross-system option
     configureFlags = [
         ( if sslSupport then "--with-ssl=${openssl.crossDrv}" else "--without-ssl" )
+        ( if gnutlsSupport then "--with-gnutls=${gnutls.crossDrv}" else "--without-gnutls" )
         "--with-random /dev/urandom"
       ];
   };
