@@ -61,6 +61,10 @@ let
     } // cfg.extraConf)
   )));
 
+  kibanaPlugins = pkgs.buildEnv {
+    name = "kibana-plugins";
+    paths = cfg.plugins;
+  };
 in {
   options.services.kibana = {
     enable = mkEnableOption "enable kibana service";
@@ -171,6 +175,12 @@ in {
       type = types.path;
     };
 
+    plugins = mkOption {
+      description = "Extra Kibana plugins";
+      default = [];
+      type = types.listOf types.package;
+    };
+
     extraConf = mkOption {
       description = "Kibana extra configuration";
       default = {};
@@ -188,6 +198,9 @@ in {
         ExecStart = "${cfg.package}/bin/kibana --config ${cfgFile}";
         User = "kibana";
         WorkingDirectory = cfg.dataDir;
+        preStart = ''
+          ln -sfT ${kibanaPlugins}/plugins ${cfg.dataDir}/plugins
+        '';
       };
     };
 

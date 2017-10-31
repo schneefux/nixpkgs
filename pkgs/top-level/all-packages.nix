@@ -5009,6 +5009,8 @@ with pkgs;
 
   xxkb = callPackage ../applications/misc/xxkb { };
 
+  x-pack = callPackage ../development/tools/misc/kibana/x-pack.nix { };
+
   ugarit = callPackage ../tools/backup/ugarit { };
 
   ugarit-manifest-maker = callPackage ../tools/backup/ugarit-manifest-maker { };
