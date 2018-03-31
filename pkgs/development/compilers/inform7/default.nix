@@ -16,6 +16,13 @@ in stdenv.mkDerivation {
     ./install-inform7.sh --prefix $out
     popd
 
+    # workaround for a segmentation fault
+    # in the x86_64 version of the ni compiler
+    if [ $(uname -m) = "x86_64" ]
+    then
+      tar xzf inform7-compilers_6M62_i386.tar.gz -C $out share/inform7/Compilers/ni
+    fi
+
     substituteInPlace "$out/bin/i7" \
       --replace "/usr/bin/perl" "${perl}/bin/perl"
   '';
