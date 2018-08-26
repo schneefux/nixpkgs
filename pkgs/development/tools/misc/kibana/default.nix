@@ -18,11 +18,11 @@ let
   shas =
     if enableUnfree
     then {
-      "x86_64-linux"  = "1kk97ggpzmblhqm6cfd2sv5940f58h323xcyg6rba1njj7lzanv0";
+      "x86_64-linux"  = "1vlasy960qfd7jxc3vzil0lk99ajl44yvjprmnhhdhh8b885c86z";
       "x86_64-darwin" = "1xvwffk8d8br92h0laf4b1m76kvki6cj0pbgcvirfcj1r70vk6c3";
     }
     else {
-      "x86_64-linux"  = "0m81ki1v61gpwb3s6zf84azqrirlm9pdfx65g3xmvdp3d3wii5ly";
+      "x86_64-linux"  = "1x4n8cxd7x200gv3181fa8c4zjc5n3qkp1rhmc2dm3gfhsmjr0qj";
       "x86_64-darwin" = "0zh9p6vsq1d0gh6ks7z6bh8sbhn6rm4jshjcfp3c9k7n2qa8vv9b";
     };
 

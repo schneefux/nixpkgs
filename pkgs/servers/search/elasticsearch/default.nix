@@ -19,8 +19,8 @@ stdenv.mkDerivation (rec {
     url = "https://artifacts.elastic.co/downloads/elasticsearch/${name}.tar.gz";
     sha256 =
       if enableUnfree
-      then "0960ak602pm95p2mha9cb1mrwdky8pfw3y89r2v4zpr5n730hmnh"
-      else "1i4i1ai75bf8k0zd1qf8x0bavrm8rcw13xdim443zza09w95ypk4";
+      then "00agwbq6s2wdpfbp9s6jhjsb66lsp907cz40wbg2mlgcbkxnwy79"
+      else "1dlqyl4mgd0sinfp8qz03z7psxngl9x4v5qqi6945wvlni0ipj63";
   };
 
   patches = [ ./es-home-6.x.patch ];
@@ -57,7 +57,7 @@ stdenv.mkDerivation (rec {
   nativeBuildInputs = [ autoPatchelfHook ];
   runtimeDependencies = [ zlib ];
   postFixup = ''
-    for exe in $(find $out/modules/x-pack/x-pack-ml/platform/linux-x86_64/bin -executable -type f); do
+    for exe in $(find $out/modules/x-pack-ml/platform/linux-x86_64/bin -executable -type f); do
       echo "patching $exe..."
       patchelf --set-interpreter "$(cat $NIX_CC/nix-support/dynamic-linker)" "$exe"
     done
