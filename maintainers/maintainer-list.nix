@@ -227,7 +227,7 @@
     name = "Andrew Morsillo";
   };
   AndersonTorres = {
-    email = "torres.anderson.85@gmail.com";
+    email = "torres.anderson.85@protonmail.com";
     github = "AndersonTorres";
     name = "Anderson Torres";
   };
@@ -1570,6 +1570,11 @@
     github = "grburst";
     name = "Julius Elias";
   };
+  greydot = {
+    email = "lanablack@amok.cc";
+    github = "greydot";
+    name = "Lana Black";
+  };
   gridaphobe = {
     email = "eric@seidel.io";
     github = "gridaphobe";
@@ -1639,6 +1644,11 @@
     email = "parizhskiy@gmail.com";
     github = "heel";
     name = "Sergii Paryzhskyi";
+  };
+  helkafen = {
+    email = "arnaudpourseb@gmail.com";
+    github = "Helkafen";
+    name = "Sébastian Méric de Bellefon";
   };
   henrytill = {
     email = "henrytill@gmail.com";
@@ -1837,6 +1847,11 @@
     github = "jerith666";
     name = "Matt McHenry";
   };
+  jethro = {
+    email = "jethrokuan95@gmail.com";
+    github = "jethrokuan";
+    name = "Jethro Kuan";
+  };
   jfb = {
     email = "james@yamtime.com";
     github = "tftio";
@@ -1866,6 +1881,11 @@
     email = "jakob@gillich.me";
     github = "jgillich";
     name = "Jakob Gillich";
+  };
+  jglukasik = {
+    email = "joseph@jgl.me";
+    github = "jglukasik";
+    name = "Joseph Lukasik";
   };
   jhhuh = {
     email = "jhhuh.note@gmail.com";
@@ -3381,6 +3401,11 @@
     github = "relrod";
     name = "Ricky Elrod";
   };
+  renatoGarcia = {
+    email = "fgarcia.renato@gmail.com";
+    github = "renatoGarcia";
+    name = "Renato Garcia";
+  };
   renzo = {
     email = "renzocarbonara@gmail.com";
     github = "k0001";
@@ -3873,6 +3898,11 @@
     github = "StillerHarpo";
     name = "Florian Engel";
   };
+  stites = {
+    email = "sam@stites.io";
+    github = "stites";
+    name = "Sam Stites";
+  };
   stumoss = {
     email = "samoss@gmail.com";
     github = "stumoss";
@@ -4137,6 +4167,11 @@
     email = "tom@tsmeets.nl";
     github = "tomsmeets";
     name = "Tom Smeets";
+  };
+  toonn = {
+    email = "nnoot@toonn.io";
+    github = "toonn";
+    name = "Toon Nolten";
   };
   travisbhartwell = {
     email = "nafai@travishartwell.net";
@@ -4492,6 +4527,11 @@
     email = "y0no@y0no.fr";
     github = "y0no";
     name = "Yoann Ono";
+  };
+  yarny = {
+    email = "41838844+Yarny0@users.noreply.github.com";
+    github = "Yarny0";
+    name = "Yarny";
   };
   yarr = {
     email = "savraz@gmail.com";
